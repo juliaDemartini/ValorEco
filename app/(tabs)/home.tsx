@@ -1,47 +1,114 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { getAuth } from 'firebase/auth';
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore'; // Combinei tudo aqui
+import { db } from '../../src/service/firebaseConfig'; // Verifique se o nome da pasta é service ou services
+
 
 export default function HomeScreen() {
-    const router = useRouter();
+  const router = useRouter();
+  const auth = getAuth();
+
+  // Estados para dados reais do Firebase
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const registrarReciclagem = async () => {
+      try {
+        const user = auth.currentUser; // Agora ele vai achar!
+        if (user && userData) {
+          const userRef = doc(db, "usuarios", user.email!);
+
+          const novoSaldo = (userData.saldo || 0) + 10;
+          const novoTotalReciclado = (userData.totalReciclado || 0) + 2;
+
+          await updateDoc(userRef, {
+            saldo: novoSaldo,
+            totalReciclado: novoTotalReciclado
+          });
+
+          alert("Incrível! +10 EcoValores creditados. 🌿");
+        }
+      } catch (error) {
+        console.error("Erro ao atualizar pontos:", error);
+      }
+    };
+
+  useEffect(() => {
+    const user = auth.currentUser;
+
+    if (user && user.email) {
+      const docRef = doc(db, "usuarios", user.email);
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          setUserData(docSnap.data());
+        }
+        setLoading(false);
+      }, (error) => {
+        console.error("Erro no Firebase:", error);
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    } else {
+      // SE NÃO TIVER USUÁRIO, MANDA PARA O LOGIN OU PARA O LOADING FALSE
+      setLoading(false);
+      // router.replace('/login'); // Opcional: forçar volta ao login
+    }
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F5F5' }}>
+        <ActivityIndicator size="large" color="#2E7D32" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
 
-        {/* Header: Nome e Avatar */}
+        {/* Header Dinâmico: Puxa nome do Firestore */}
         <View style={styles.header}>
-              <View>
-                <Text style={styles.welcome}>Olá, Julia! 👋</Text>
-                <Text style={styles.studentInfo}>Software Engineering Student</Text>
-              </View>
+          <View>
+            <Text style={styles.welcome}>Olá, {userData?.nome || 'Estudante'}! 👋</Text>
+            <Text style={styles.studentInfo}>{userData?.curso || 'Software Engineering Student'}</Text>
+          </View>
 
-              {/* Avatar Clicável que leva ao Perfil */}
-              <TouchableOpacity
-                style={styles.avatar}
-                onPress={() => router.push('/(tabs)/perfil')}
-              >
-                <Ionicons name="person" size={30} color="#FFF" />
-              </TouchableOpacity>
-            </View>
-
-        {/* Wallet Card: Saldo EV */}
-        <View style={styles.walletCard}>
-          <Text style={styles.walletLabel}>Saldo EcoValor</Text>
-          <Text style={styles.walletValue}>$ 150 EV</Text>
+          <TouchableOpacity
+            style={styles.avatar}
+            onPress={() => router.push('/(tabs)/perfil')}
+          >
+            <Ionicons name="person" size={30} color="#FFF" />
+          </TouchableOpacity>
         </View>
 
-        {/* Seção: Meta de Reciclagem */}
+        {/* Wallet Card Dinâmico: Puxa saldo real */}
+        <View style={styles.walletCard}>
+          <Text style={styles.walletLabel}>Saldo EcoValor</Text>
+          <Text style={styles.walletValue}>$ {userData?.saldo || 0} EV</Text>
+        </View>
+
+        {/* Seção: Meta de Reciclagem (Pode ser calculada com base no totalReciclado) */}
         <View style={styles.goalSection}>
           <View style={styles.goalHeader}>
             <Text style={styles.goalTitle}>Meta Semanal</Text>
-            <Text style={styles.goalPercent}>75%</Text>
+            <Text style={styles.goalPercent}>
+              {Math.min(Math.round(((userData?.totalReciclado || 0) / 20) * 100), 100)}%
+            </Text>
           </View>
-          <View style={styles.progressBar}><View style={[styles.progressFill, { width: '75%' }]} /></View>
-          <Text style={styles.goalDetail}>Faltam 5kg para sua meta de 20kg!</Text>
+          <View style={styles.progressBar}>
+           <View style={[styles.progressFill, { width: `${Math.min((userData?.totalReciclado || 0) / 20 * 100, 100)}%` }]} />
+          </View>
+          <Text style={styles.goalDetail}>
+            Reciclado: {userData?.totalReciclado || 0}kg de uma meta de 20kg!
+          </Text>
         </View>
 
-        {/* Grid de Atalhos (Hub) */}
+        {/* Grid de Atalhos */}
         <View style={styles.grid}>
           {[
             { n: 'Catálogo', i: 'book' }, { n: 'Cupons', i: 'pricetags' },
@@ -55,8 +122,7 @@ export default function HomeScreen() {
         </View>
       </ScrollView>
 
-      {/* Botão Mestre (CTA) Flutuante */}
-      <TouchableOpacity style={styles.fab}>
+    <TouchableOpacity style={styles.fab} onPress={registrarReciclagem}>
         <Ionicons name="scan" size={30} color="white" />
         <Text style={styles.fabText}>ESCANEAR ESTAÇÃO</Text>
       </TouchableOpacity>
@@ -64,6 +130,9 @@ export default function HomeScreen() {
   );
 }
 
+
+
+// ... Mantenha os seus estilos originais (styles) ...
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F5F5F5' },
   header: { flexDirection: 'row', justifyContent: 'space-between', padding: 25, paddingTop: 60 },

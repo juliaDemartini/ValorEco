@@ -4,13 +4,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { getAuth, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../src/service/firebaseConfig';
+import { db } from '../../src/service/firebaseConfig'; // Verifique se é 'service' ou 'services'
 
 export default function ProfileScreen() {
   const router = useRouter();
   const auth = getAuth();
 
-  // Estados para os dados do banco
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -22,14 +21,11 @@ export default function ProfileScreen() {
     try {
       const user = auth.currentUser;
       if (user) {
-        // Busca o documento no Firestore usando o e-mail do usuário como ID
         const docRef = doc(db, "usuarios", user.email!);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           setUserData(docSnap.data());
-        } else {
-          console.log("Documento não encontrado no Firestore!");
         }
       }
     } catch (error) {
@@ -63,7 +59,7 @@ export default function ProfileScreen() {
         <Text style={styles.userBio}>{userData?.curso || "Estudante"} | FAETERJ</Text>
       </View>
 
-      {/* Cards de Estatísticas com Dados do Banco */}
+      {/* Cards de Estatísticas */}
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
           <Ionicons name="leaf" size={24} color="#2E7D32" />
@@ -83,10 +79,22 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.menuSection}>
-        <TouchableOpacity style={styles.menuItem}>
+        <View style={styles.menuItem}>
           <Ionicons name="school-outline" size={22} color="#444" />
           <Text style={styles.menuText}>Matrícula: {userData?.matricula || "Não informada"}</Text>
-        </TouchableOpacity>
+        </View>
+
+        {/* --- BOTÃO DE ADMIN: SÓ APARECE PARA JULIA --- */}
+        {auth.currentUser?.email === 'estudosdajudemartini@gmail.com' && (
+          <TouchableOpacity
+            style={styles.adminButton}
+            onPress={() => router.push('/admin')}
+          >
+            <Ionicons name="shield-checkmark" size={22} color="#FFF" />
+            <Text style={styles.adminButtonText}>PAINEL ADMINISTRATIVO</Text>
+            <Ionicons name="chevron-forward" size={18} color="#FFF" />
+          </TouchableOpacity>
+        )}
 
         <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={22} color="#D32F2F" />
@@ -97,7 +105,6 @@ export default function ProfileScreen() {
   );
 }
 
-// ... Mantenha os seus estilos originais (styles) abaixo ...
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#FFF' },
     header: { alignItems: 'center', paddingVertical: 40, backgroundColor: '#F8F9FA' },
@@ -120,5 +127,28 @@ const styles = StyleSheet.create({
       flexDirection: 'row', alignItems: 'center', paddingVertical: 18,
       borderBottomWidth: 1, borderBottomColor: '#F0F0F0'
     },
-    menuText: { flex: 1, marginLeft: 15, fontSize: 16, color: '#444' }
+    menuText: { flex: 1, marginLeft: 15, fontSize: 16, color: '#444' },
+    // Estilos do Botão de Admin
+    adminButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#1A1A1A',
+      padding: 18,
+      borderRadius: 15,
+      marginTop: 20,
+      marginBottom: 10,
+      elevation: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+    },
+    adminButtonText: {
+      flex: 1,
+      color: '#FFF',
+      fontWeight: 'bold',
+      marginLeft: 15,
+      fontSize: 14,
+      letterSpacing: 1
+    }
   });

@@ -37,35 +37,47 @@ export default function HomeScreen() {
     };
 
   useEffect(() => {
-    const user = auth.currentUser;
-
-    if (user && user.email) {
-      const docRef = doc(db, "usuarios", user.email);
-      const unsubscribe = onSnapshot(docRef, (docSnap) => {
-        if (docSnap.exists()) {
-          setUserData(docSnap.data());
-        }
+    // Timer para não deixar o usuário preso no loading se a internet falhar
+    const segurancaTimer = setTimeout(() => {
+      if (loading) {
+        console.log("Timeout de rede: Carregando dados offline/padrão");
         setLoading(false);
-      }, (error) => {
-        console.error("Erro no Firebase:", error);
-        setLoading(false);
-      });
+        setUserData({ nome: "Estudante", saldo: 0, totalReciclado: 0 });
+      }
+    }, 4000); // 4 segundos de paciência
 
-      return () => unsubscribe();
-    } else {
-      // SE NÃO TIVER USUÁRIO, MANDA PARA O LOGIN OU PARA O LOADING FALSE
-      setLoading(false);
-      // router.replace('/login'); // Opcional: forçar volta ao login
-    }
+    const unsubscribeAuth = auth.onAuthStateChanged((user) => {
+      if (user && user.email) {
+        const docRef = doc(db, "usuarios", user.email);
+
+        const unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
+          clearTimeout(segurancaTimer); // Se o Firebase responder, cancela o timer
+          if (docSnap.exists()) {
+            setUserData(docSnap.data());
+          } else {
+            setUserData({ nome: "Novo Aluno", saldo: 0, totalReciclado: 0 });
+          }
+          setLoading(false);
+        }, (error) => {
+          console.error("Erro Firestore:", error);
+          setLoading(false);
+        });
+
+        return () => {
+          unsubscribeSnapshot();
+          clearTimeout(segurancaTimer);
+        };
+      } else {
+        setLoading(false);
+        clearTimeout(segurancaTimer);
+      }
+    });
+
+    return () => {
+      unsubscribeAuth();
+      clearTimeout(segurancaTimer);
+    };
   }, []);
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F5F5' }}>
-        <ActivityIndicator size="large" color="#2E7D32" />
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>

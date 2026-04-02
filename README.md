@@ -79,7 +79,7 @@ npx expo start
 
 ## 👩‍💻 Sobre a Desenvolvedora
 
-**Julia Martini**  
+**Julia Demartini**  
 *Desenvolvedora de Software apaixonada por tecnologia e impacto social.*
 
 ---

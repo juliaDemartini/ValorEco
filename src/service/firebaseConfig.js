@@ -1,24 +1,17 @@
+// src/service/firebaseConfig.js ou o caminho onde ele estiver
 import { initializeApp } from "firebase/app";
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import { getFirestore } from "firebase/firestore";
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBRa2avrSBWEmfrSviY-WDsu0NkO5E1Vhw",
-  authDomain: "valor-eco.firebaseapp.com",
-  projectId: "valor-eco",
-  storageBucket: "valor-eco.firebasestorage.app",
-  messagingSenderId: "548297715892",
-  appId: "1:548297715892:web:243198c5b3b0ef5a8ae7e1",
-  measurementId: "G-CCCZHBTL4J"
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
-
-// Substitua o getAuth() por isso:
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
-});
-
-export const db = getFirestore(app); // Verifique se tem o 'export' antes do 'const'
+export const db = getFirestore(app);
+export const auth = getAuth(app);

@@ -1,50 +1,88 @@
-# Welcome to your Expo app 👋
+# 🌿 ValorEco | Sustentabilidade Digital e Economia Circular (Em Desenvolvimento)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+[![React Native](https://img.shields.io/badge/React_Native-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactnative.dev/)
+[![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![Arduino](https://img.shields.io/badge/-Arduino-00979D?style=for-the-badge&logo=Arduino&logoColor=white)](https://www.arduino.cc/)
 
-## Get started
+O **ValorEco** é uma solução Full Stack que integra **IoT (Internet das Coisas)** e **Mobile** para transformar o descarte de resíduos em uma experiência de valor. Através de uma lixeira inteligente e um aplicativo gamificado, incentivamos a reciclagem recompensando usuários com **EcoValores** por suas ações sustentáveis.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 🌟 Impactos Positivos
 
-2. Start the app
+*   **Educação Ambiental na Prática:** Transforma a percepção do "lixo" em "recurso" através de gratificação instantânea.
+*   **Redução de Resíduos:** Estimula o descarte correto em comunidades e instituições, diminuindo o impacto ambiental local.
+*   **Fortalecimento da Economia Circular:** Conecta usuários a benefícios reais (vouchers, produtos, cursos) em troca de material reciclado validado.
+*   **Métricas de Impacto:** Gera dados precisos sobre o volume de reciclagem (plástico, vidro, alumínio) via sensores de hardware.
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 🛠️ Stack Tecnológica
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+*   **App:** React Native (Expo) com TypeScript.
+*   **Backend & Auth:** Firebase (Cloud Firestore & Authentication).
+*   **Hardware (IoT):** Arduino com Sensores de Carga (Células de Peso) para validação física do descarte.
+*   **Navegação:** Expo Router (File-based routing).
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## ✨ Funcionalidades Principais
 
-When you're ready, run:
+*   ✅ **Lixeira Inteligente (IoT):** Integração com sensores para validar o peso real do resíduo descartado.
+*   ✅ **Carteira Digital:** Saldo de EcoValores atualizado em tempo real via *listeners* do Firestore.
+*   ✅ **Marketplace de Resgate:** Sistema de transações seguras para troca de pontos por recompensas.
+*   ✅ **Painel Administrativo:** Área restrita para gestão de usuários, monitoramento de impacto e aprovação de novos perfis.
 
+---
+
+## 📥 Como ter uma cópia do projeto (Instalação)
+
+Siga os passos abaixo para rodar o **ValorEco** localmente:
+
+### 1. Pré-requisitos
+*   [Node.js](https://nodejs.org/) instalado.
+*   [Expo Go](https://expo.dev/client) no seu celular ou um emulador configurado.
+*   Conta no [Firebase](https://console.firebase.google.com/).
+
+### 2. Clonar o Repositório
 ```bash
-npm run reset-project
+git clone [https://github.com/seu-usuario/valoreco.git](https://github.com/seu-usuario/valoreco.git)
+cd valoreco
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 3. Instalar Dependências
+```bash
+npm install
+```
 
-## Learn more
+### 4. Configurar o Firebase
+Crie um projeto no Firebase, ative o **Firestore** e o **Authentication**, e adicione suas credenciais em `src/service/firebaseConfig.js`:
 
-To learn more about developing your project with Expo, look at the following resources:
+```javascript
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "seu-projeto.firebaseapp.com",
+  projectId: "seu-projeto",
+  storageBucket: "seu-projeto.appspot.com",
+  messagingSenderId: "seu-id",
+  appId: "seu-app-id"
+};
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 5. Rodar o App
+```bash
+npx expo start
+```
+*Escaneie o QR Code com o app Expo Go para visualizar no seu dispositivo.*
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+## 👩‍💻 Sobre a Desenvolvedora
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+**Julia Martini**  
+*Desenvolvedora de Software apaixonada por tecnologia e impacto social.*
+
+---
+
+> "Transformando a tecnologia em uma ferramenta poderosa para um planeta mais verde e consciente." 🌍🚀
+```

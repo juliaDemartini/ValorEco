@@ -29,6 +29,7 @@ O **ValorEco** é uma solução Full Stack que integra **IoT (Internet das Coisa
 ## ✨ Funcionalidades Principais
 
 *   ✅ **Lixeira Inteligente (IoT):** Integração com sensores para validar o peso real do resíduo descartado.
+*   (em desenvolvimento)
 *   ✅ **Carteira Digital:** Saldo de EcoValores atualizado em tempo real via *listeners* do Firestore.
 *   ✅ **Marketplace de Resgate:** Sistema de transações seguras para troca de pontos por recompensas.
 *   ✅ **Painel Administrativo:** Área restrita para gestão de usuários, monitoramento de impacto e aprovação de novos perfis.
